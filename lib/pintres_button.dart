@@ -33,7 +33,7 @@ class _ButtonState extends State<_Button> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          _NeomorphismButton(onTap: _togglePosition),
+          _NeomorphismButton(onTap: _togglePosition, isOnRight: _isOnRight),
           AnimatedAlign(
             duration: const Duration(milliseconds: 320),
             curve: Curves.easeInOut,
@@ -52,9 +52,10 @@ class _ButtonState extends State<_Button> {
 }
 
 class _NeomorphismButton extends StatelessWidget {
-  const _NeomorphismButton({required this.onTap});
+  const _NeomorphismButton({required this.onTap, required this.isOnRight});
 
   final VoidCallback onTap;
+  final bool isOnRight;
 
   @override
   Widget build(BuildContext context) {
@@ -90,26 +91,19 @@ class _NeomorphismButton extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 22),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text(
-                    'DARK',
-                    style: TextStyle(
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  child: Text(
+                    isOnRight ? 'DARK' : 'LIGHT',
+                    key: ValueKey(isOnRight),
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.8,
                     ),
                   ),
-                  Text(
-                    'LIGHT',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
