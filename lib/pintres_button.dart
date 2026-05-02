@@ -23,24 +23,26 @@ class _Button extends StatefulWidget {
 
 class _ButtonState extends State<_Button> {
   bool _isOnRight = false;
+  void _togglePosition() => setState(() => _isOnRight = !_isOnRight);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200,
+      width: 210,
       height: 120,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          const _NeomorphismButton(),
+          _NeomorphismButton(onTap: _togglePosition),
           AnimatedAlign(
             duration: const Duration(milliseconds: 320),
             curve: Curves.easeInOut,
-            alignment:
-                _isOnRight ? Alignment.centerRight : Alignment.centerLeft,
+            alignment: _isOnRight
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
             child: GestureDetector(
-              onTap: () => setState(() => _isOnRight = !_isOnRight),
-              child: const _LiquidGlassButton(),
+              onTap: _togglePosition,
+              child: _LiquidGlassButton(isOnRight: _isOnRight),
             ),
           ),
         ],
@@ -50,32 +52,77 @@ class _ButtonState extends State<_Button> {
 }
 
 class _NeomorphismButton extends StatelessWidget {
-  const _NeomorphismButton();
+  const _NeomorphismButton({required this.onTap});
+
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 200,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Color(0xFF919199),
-        borderRadius: BorderRadius.circular(50),
-        border: GradientBoxBorder(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.black],
-            begin: Alignment.center,
-          ),
+    return GestureDetector(
+      onTap: onTap,
+
+      child: SizedBox(
+        width: 200,
+        height: 70,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 200,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Color(0xFF919199),
+                borderRadius: BorderRadius.circular(50),
+                border: GradientBoxBorder(
+                  gradient: LinearGradient(
+                    colors: [Colors.white, Colors.black],
+                    begin: Alignment.center,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 50,
+                    color: Colors.white,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text(
+                    'DARK',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  Text(
+                    'LIGHT',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(blurRadius: 50, color: Colors.white, offset: Offset(0, 8)),
-        ],
       ),
     );
   }
 }
 
 class _LiquidGlassButton extends StatelessWidget {
-  const _LiquidGlassButton();
+  const _LiquidGlassButton({required this.isOnRight});
+
+  final bool isOnRight;
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +137,11 @@ class _LiquidGlassButton extends StatelessWidget {
       child: SizedBox(
         width: 78,
         height: 120,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(80),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.01),
-              width: 10,
-            ),
+        child: Center(
+          child: Icon(
+            isOnRight ? Icons.sunny : Icons.nights_stay_rounded,
+            color: Colors.white,
+            size: 35,
           ),
         ),
       ),
