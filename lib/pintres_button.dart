@@ -1,48 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_borders/gradient_borders.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+import 'package:pintrest_ui/color_plate.dart';
 
-class PintresButton extends StatelessWidget {
+class PintresButton extends StatefulWidget {
   const PintresButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFF8F8F97),
-      body: Center(child: _Button()),
-    );
-  }
+  State<PintresButton> createState() => _PintresButtonState();
 }
 
-class _Button extends StatefulWidget {
-  const _Button();
-
-  @override
-  State<_Button> createState() => _ButtonState();
-}
-
-class _ButtonState extends State<_Button> {
+class _PintresButtonState extends State<PintresButton> {
   bool _isOnRight = false;
+
   void _togglePosition() => setState(() => _isOnRight = !_isOnRight);
 
   @override
   Widget build(BuildContext context) {
+    final colors = ButtonColorPalette.fromMode(isDarkMode: _isOnRight);
+    return Scaffold(
+      backgroundColor: colors.scaffoldBackground,
+      body: Center(
+        child: _Button(isOnRight: _isOnRight, onToggle: _togglePosition),
+      ),
+    );
+  }
+}
+
+class _Button extends StatelessWidget {
+  const _Button({required this.isOnRight, required this.onToggle});
+
+  final bool isOnRight;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = isOnRight;
+    final colors = ButtonColorPalette.fromMode(isDarkMode: isDarkMode);
+
     return SizedBox(
       width: 210,
       height: 120,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          _NeomorphismButton(onTap: _togglePosition, isOnRight: _isOnRight),
+          _NeomorphismButton(
+            onTap: onToggle,
+            isOnRight: isOnRight,
+            colors: colors,
+          ),
           AnimatedAlign(
             duration: const Duration(milliseconds: 320),
             curve: Curves.easeInOut,
-            alignment: _isOnRight
+            alignment: isOnRight
                 ? Alignment.centerRight
                 : Alignment.centerLeft,
             child: GestureDetector(
-              onTap: _togglePosition,
-              child: _LiquidGlassButton(isOnRight: _isOnRight),
+              onTap: onToggle,
+              child: _LiquidGlassButton(isOnRight: isOnRight, colors: colors),
             ),
           ),
         ],
@@ -52,10 +67,15 @@ class _ButtonState extends State<_Button> {
 }
 
 class _NeomorphismButton extends StatelessWidget {
-  const _NeomorphismButton({required this.onTap, required this.isOnRight});
+  const _NeomorphismButton({
+    required this.onTap,
+    required this.isOnRight,
+    required this.colors,
+  });
 
   final VoidCallback onTap;
   final bool isOnRight;
+  final ColorPlate colors;
 
   @override
   Widget build(BuildContext context) {
@@ -72,18 +92,18 @@ class _NeomorphismButton extends StatelessWidget {
               width: 200,
               height: 70,
               decoration: BoxDecoration(
-                color: Color(0xFF919199),
+                color: colors.trackBackground,
                 borderRadius: BorderRadius.circular(50),
                 border: GradientBoxBorder(
                   gradient: LinearGradient(
-                    colors: [Colors.white, Colors.black],
+                    colors: colors.borderGradientColors,
                     begin: Alignment.center,
                   ),
                 ),
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 50,
-                    color: Colors.white,
+                    color: colors.shadowColor,
                     offset: Offset(0, 8),
                   ),
                 ],
@@ -101,8 +121,8 @@ class _NeomorphismButton extends StatelessWidget {
                   child: Text(
                     isOnRight ? 'DARK' : 'LIGHT',
                     key: ValueKey(isOnRight),
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: colors.labelColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                       letterSpacing: 2,
@@ -119,16 +139,17 @@ class _NeomorphismButton extends StatelessWidget {
 }
 
 class _LiquidGlassButton extends StatelessWidget {
-  const _LiquidGlassButton({required this.isOnRight});
+  const _LiquidGlassButton({required this.isOnRight, required this.colors});
 
   final bool isOnRight;
+  final ColorPlate colors;
 
   @override
   Widget build(BuildContext context) {
     return LiquidGlass.withOwnLayer(
       settings: LiquidGlassSettings(
         thickness: 15,
-        glassColor: Colors.white.withValues(alpha: 0.01),
+        glassColor: colors.glassColor,
         lightIntensity: 5,
         blur: 0,
       ),
@@ -139,7 +160,7 @@ class _LiquidGlassButton extends StatelessWidget {
         child: Center(
           child: Icon(
             isOnRight ? Icons.sunny : Icons.nights_stay_rounded,
-            color: Colors.white,
+            color: colors.iconColor,
             size: 35,
           ),
         ),
