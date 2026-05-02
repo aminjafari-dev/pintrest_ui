@@ -91,7 +91,11 @@ class _NeomorphismButton extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 22),
-              child: Center(
+              child: Align(
+                alignment: isOnRight
+                    ? Alignment.centerLeft
+                    : Alignment.centerRight,
+
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 220),
                   child: Text(
@@ -99,8 +103,9 @@ class _NeomorphismButton extends StatelessWidget {
                     key: ValueKey(isOnRight),
                     style: const TextStyle(
                       color: Colors.white70,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.8,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      letterSpacing: 2,
                     ),
                   ),
                 ),
